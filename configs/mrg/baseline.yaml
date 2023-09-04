@@ -1,7 +1,7 @@
 data:
   dataset_name: "iu_xray"
-  image_dir: "../../data/iu_xray/images"
-  ann_path: "../../data/iu_xray/annotation.json"
+  image_dir: "../../MRG/data/iu_xray/images"
+  ann_path: "../../MRG/data/iu_xray/annotation.json"
   tokenizer: "ori"
   max_seq_length: 60
   threshold: 3
@@ -40,6 +40,7 @@ trainer:
   result_dir: "results/iu_xray/baseline"
   record_dir: "records/iu_xray/baseline"
   save_period: 1
+  metric: ['Meteor', 'Rouge', 'Cider', 'Bleu']
   monitor_mode: "max"
   monitor_metric: "BLEU_4"
   early_stop: 50
@@ -60,9 +61,9 @@ optim:
   gamma: 0.1
 
 other:
-  task_name: "train_baseline_iuxray"
+  task_name: "train_baseline_iuxray"  # you can name current running work
   seed: -1
   cuda: 3
-  task: "train"
+  task: "mrg"
   load_model_path: ""
   resume: ""

@@ -31,7 +31,7 @@ class MRGPipeline(BasePipeline):
         self.lr_scheduler = lr_scheduler
     
     def train(self):
-        for epoch in range(self.cfgs["epoch"]):
+        for epoch in range(self.cfgs["epochs"]):
             self._train_epoch(epoch)
 
     def _train_epoch(self, epoch):
@@ -51,9 +51,9 @@ class MRGPipeline(BasePipeline):
             print(f"\repoch: {epoch+1} {batch_idx+1}/{len(self.train_dataloader)}\tloss: {loss:.3f}\tmean loss: {train_loss/(batch_idx+1):.3f}",
                   flush=True, end='')
 
-            if self.args["lr_scheduler"] != 'StepLR':
+            if self.cfgs["lr_scheduler"] != 'StepLR':
                 self.lr_scheduler.step()
-        if self.args["lr_scheduler"] == 'StepLR':
+        if self.cfgs["lr_scheduler"] == 'StepLR':
             self.lr_scheduler.step()
 
         log = {'train_loss': train_loss / len(self.train_dataloader)}
@@ -63,7 +63,7 @@ class MRGPipeline(BasePipeline):
         self.model.eval()
         with torch.no_grad():
             val_gts, val_res = [], []
-            p = torch.zeros([1, self.args["max_seq_length"]]).cuda()
+            p = torch.zeros([1, self.cfgs["max_seq_length"]]).cuda()
             for batch_idx, (images_id, images, reports_ids, reports_masks) in enumerate(self.val_dataloader):
                 images, reports_ids, reports_masks = images.cuda(), reports_ids.cuda(), reports_masks.cuda()
                 output = self.model(images, mode='sample')
@@ -86,7 +86,7 @@ class MRGPipeline(BasePipeline):
         self.model.eval()
         with torch.no_grad():
             test_gts, test_res, p = [], [], []
-            p = torch.zeros([1, self.args["max_seq_length"]]).cuda()
+            p = torch.zeros([1, self.cfgs["max_seq_length"]]).cuda()
             for batch_idx, (images_id, images, reports_ids, reports_masks) in enumerate(self.test_dataloader):
                 images, reports_ids, reports_masks = images.cuda(), reports_ids.cuda(), reports_masks.cuda()
                 output = self.model(images, mode='sample')
@@ -106,16 +106,27 @@ class MRGPipeline(BasePipeline):
             test_met['p'] = lp
             log.update(**{'test_' + k: v for k, v in test_met.items()})
 
-        if self.args['monitor_metric_curves']:
+        if self.cfgs['monitor_metric_curves']:
             self.monitor.plot_current_metrics(epoch, self.monitor.name2val)
         self.monitor.dumpkv(epoch)
         return log
 
-    def inference(self, loader=None):
+
+    def inference(self, loader, verbose=True):
+        """
+        This function takes an integer and a string as input and returns a boolean.
+        
+        Args:
+            loader: 
+            verbose (bool)
+        
+        Returns:
+            dict: the score of each metric
+        """
         self.model.eval()
         with torch.no_grad():
             test_gts, test_res, report_pattern, img_ids = [], [], [], []
-            for batch_idx, (images_id, images, reports_ids, reports_masks) in enumerate(self.test_dataloader):
+            for batch_idx, (images_id, images, reports_ids, reports_masks) in enumerate(loader):
                 images, reports_ids, reports_masks = images.cuda(), reports_ids.cuda(), reports_masks.cuda()
                 output = self.model(images, mode='sample')
                 reports = self.model.tokenizer.decode_batch(output.cpu().numpy())
@@ -123,18 +134,20 @@ class MRGPipeline(BasePipeline):
                 ground_truths = self.model.tokenizer.decode_batch(reports_ids[:, 1:].cpu().numpy())
                 test_res.extend(reports)
                 test_gts.extend(ground_truths)
-                print(f"\rTest Processing: [{int((batch_idx + 1) / len(self.test_dataloader) * 100)}%]", end='',
-                      flush=True)
+                if verbose:
+                    print(f"\rInference Processing: [{int((batch_idx + 1) / len(loader) * 100)}%]", end='',
+                        flush=True)
             # test_res = torch.load("results/mimic_cxr/DMIRG/DMIRG/118_report_100.npy")
-            test_met = self.metric_fns({i: [gt] for i, gt in enumerate(test_gts)},
-                                        {i: [re] for i, re in enumerate(test_res)})
+            test_met = self.metric_caculator.compute_scores({i: [gt] for i, gt in enumerate(test_gts)},
+                                                            {i: [re] for i, re in enumerate(test_res)})
             
-            save_report(test_res, test_gts, img_ids, os.path.join(self.checkpoint_dir, 'report.csv'))
-            print(test_met)
-            # print(lp)
+            # save_report(test_res, test_gts, img_ids, os.path.join(self.checkpoint_dir, 'report.csv'))
+            if verbose:
+                print('\n', test_met)
+            return test_met
 
 def count_report_pattern(report_pattern):
-    t = torch.unique(report_pattern, dim=0)
-    l = t.size(0)
+    unique_report_pattern = torch.unique(report_pattern, dim=0)
+    num_report_pattern = num_report_pattern.size(0)
     return unique_report_pattern, num_report_pattern
 

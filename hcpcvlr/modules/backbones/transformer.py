@@ -1,5 +1,5 @@
 """
-some modules of transformer
+modules of transformer
 """
 from __future__ import absolute_import
 from __future__ import division
@@ -12,6 +12,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from ..utils.pos_embed import get_1d_sincos_pos_embed
 
 
 def clones(module, N):
@@ -83,35 +84,51 @@ class PositionwiseFeedForward(nn.Module):
         return self.w_2(self.dropout(F.relu(self.w_1(x))))
 
 
-class Embeddings(nn.Module):
-    def __init__(self, d_model, vocab):
-        super(Embeddings, self).__init__()
-        self.lut = nn.Embedding(vocab, d_model)
-        self.d_model = d_model
+class WordEmbed(nn.Module):
+    def __init__(self, vocab_size, embed_dim):
+        super(WordEmbed, self).__init__()
+        self.lut = nn.Embedding(vocab_size, embed_dim)
+        self.embed_dim = embed_dim
 
     def forward(self, x):
-        return self.lut(x) * math.sqrt(self.d_model)
+        return self.lut(x) * math.sqrt(self.embed_dim)
 
 
-class PositionalEncoding(nn.Module):
-    def __init__(self, d_model, dropout, max_len=5000):
-        super(PositionalEncoding, self).__init__()
+
+class TextEmbed(nn.Module):
+    """
+    test embedding with 1d sin-cos embedding
+    """
+
+    def __init__(self, embed_dim, vocab_size, dropout=0.):
+        super(TextEmbed, self).__init__()
+        self.word_embed = WordEmbed(vocab_size, embed_dim)
+        self.pos_embed = nn.Parameter(torch.zeros(1, 5000 + 1, embed_dim),
+                                      requires_grad=False)  # fixed sin-cos embedding
         self.dropout = nn.Dropout(p=dropout)
+        self.norm = LayerNorm(embed_dim)
+        
+        self.initialize_weights()
+        # initialize nn.Linear and nn.LayerNorm
+        self.apply(self._init_weights)
 
-        pe = torch.zeros(max_len, d_model)
-        position = torch.arange(0, max_len).unsqueeze(1).float()
-        div_term = torch.exp(torch.arange(0, d_model, 2).float() *
-                             -(math.log(10000.0) / d_model))
-        pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
-        pe = pe.unsqueeze(0)
-        self.register_buffer('pe', pe)
-        self.pos_embed = None
+    def _init_weights(self, m):
+        if isinstance(m, nn.LayerNorm):
+            nn.init.constant_(m.bias, 0)
+            nn.init.constant_(m.weight, 1.0)
+    
+    def initialize_weights(self):
+        # initialization
+        pos_embed = get_1d_sincos_pos_embed(self.pos_embed.shape[-1], cls_token=True)
+        self.pos_embed.data.copy_(torch.from_numpy(pos_embed).float().unsqueeze(0))
 
     def forward(self, x):
-        self.pos_embed = self.pe[:, :x.size(1)]
-        x = x + self.pos_embed
-        return self.dropout(x)
+        x = self.word_embed(x)
+        x = x + self.pos_embed[:, 1:x.size(1)+1]
+        x = self.dropout(self.norm(x))
+        return x
+
+
 
 
 class SublayerConnection(nn.Module):
