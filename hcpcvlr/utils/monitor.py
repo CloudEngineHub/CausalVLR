@@ -12,29 +12,47 @@ import numpy as np
 import os.path as osp
 from collections import defaultdict
 from utils import html
+import visdom
+from numpy import inf
+import time
 
 
 class Monitor(object):
     """
     statistic level:
-        level 1 (defalut): loss and metric
-        level 2: 
+        level 1 (defalut): simply demonstrate progress, loss and metric
+        level 2: draw the curves
     """
     def __init__(self, cfgs):
         self.cfgs = cfgs
         self.statistic_level = cfgs["statistic_level"]
+        # init monitor
         self.record_dir = cfgs["record_dir"]
         if not os.path.exists(self.record_dir):
             os.makedirs(self.record_dir)
 
-        self.log_dir = osp.join(self.record_dir, 'log.txt')
+        self.log_dir = osp.join(self.record_dir, 'record.log')
         with open(self.log_dir, "w") as f:
-            t = datetime.now().strftime('%y%m%d_%H%M%S')
+            t = get_timestamp()
             temp = "=" * 25
-            f.write(f"{temp} {t} {temp}\n")
+            temp_1 = "=" * 65
+            f.write(f"{temp} {t} {temp}\n{self.cfgs}\n{temp_1}")
 
-        self.name2val = defaultdict(float)  # values this iteration
+        self.monitor_mode = cfgs["monitor_mode"]
+        self.monitor_metric = 'val_' + self.cfgs["monitor_metric"]
+        self.monitor_metric_test = 'test_' + self.cfgs["monitor_metric"]
+        assert self.monitor_mode in ['min', 'max']
+
+        self.monitor_best = inf if self.monitor_mode == 'min' else -inf
+        self.best_recorder = {'val': {self.monitor_metric: self.monitor_best},
+                              'test': {self.monitor_metric_test: self.monitor_best}}
+
+        # only record current epoch
+        self.name2val = defaultdict(float)
         self.name2cnt = defaultdict(int)
+
+        self.not_improved_count = 0
+        # TODO draw the socre curves
         if cfgs["monitor_metric_curves"]:
             self.display_id = 1
             self.use_html = True
@@ -42,9 +60,7 @@ class Monitor(object):
             self.name = cfgs['task_name']
             self.cfgs = cfgs
             self.saved = False
-            if self.display_id > 0:
-                import visdom
-                self.vis = visdom.Visdom(port=cfgs['display_port'])
+            self.vis = visdom.Visdom(port=cfgs['display_port'])
 
             if self.use_html:
                 self.web_dir = osp.join(self.record_dir, 'web')
@@ -59,12 +75,26 @@ class Monitor(object):
             #     now = time.strftime("%c")
             #     log_file.write('================ Training Loss (%s) ================\n' % now)
 
-    def logkv_mean(self, key, val):
-        oldval, cnt = self.name2val[key], self.name2cnt[key]
-        self.name2val[key] = oldval * cnt / (cnt + 1) + val / (cnt + 1)
-        self.name2cnt[key] = cnt + 1
+    def _log_mean(self, key, val):
+        if key in self.name2val.keys():
+            oldval, cnt = self.name2val[key], self.name2cnt[key]
+            self.name2val[key] = (oldval * cnt + val) / (cnt + 1)
+            self.name2cnt[key] = cnt + 1
+        else:
+            self.name2val[key] = val
+            self.name2cnt[key] = 1
 
-    def dumpkv(self, epoch):
+    def log_mean(self, info):
+        if isinstance(info, tuple):
+            key, val = info
+            self._log_mean(key, val)
+        elif isinstance(info, dict):
+            for key in info.keys():
+                self._log_mean(key, info[key])
+        else:
+            raise ValueError("It should be a dict or a tuple such as (key, val)")
+
+    def dump(self, epoch):
         d = self.name2val
         d["epoch"] = epoch
         out = d.copy()  # Return the dict for unit testing purposes
@@ -75,16 +105,101 @@ class Monitor(object):
         self.name2cnt.clear()
         return out
 
-    def logkv(self, key, val):
-        self.name2val[key] = val
+    def log(self, info):
+        if isinstance(info, tuple):
+            key, val = info
+            self.name2val[key] = val
+        elif isinstance(info, dict):
+            self.name2val.update(info)
+        else:
+            raise ValueError("It should be a dict or a tuple such as (key, val)")
+    
+    def record_best(self):
+        improved_val = (self.monitor_mode == 'min' and self.name2val[self.monitor_metric] <= self.best_recorder['val'][
+            self.monitor_metric]) or \
+                       (self.monitor_mode == 'max' and self.name2val[self.monitor_metric] >= self.best_recorder['val'][self.monitor_metric])
+        if improved_val:
+            self.best_recorder['val'].update(self.name2val)
 
-    def log(self, arr):
+        improved_test = (self.monitor_mode == 'min' and self.name2val[self.monitor_metric_test] <= self.best_recorder['test'][
+            self.monitor_metric_test]) or \
+                        (self.monitor_mode == 'max' and self.name2val[self.monitor_metric_test] >= self.best_recorder['test'][
+                            self.monitor_metric_test])
+        if improved_test:
+            self.best_recorder['test'].update(self.name2val)
+
+    def check_best(self):
+        is_best = False
+        early_stop = False
+        if self.monitor_mode != 'off':
+                try:
+                    # check whether model performance improved or not, according to specified metric(mnt_metric)
+                    improved = (self.monitor_mode == 'min' and self.name2val[self.monitor_metric] <= self.monitor_best) or \
+                               (self.monitor_mode == 'max' and self.name2val[self.monitor_metric] >= self.monitor_best)
+                except KeyError:
+                    print("Warning: Metric '{}' is not found. " "Model performance monitoring is disabled.".format(
+                        self.monitor_metric))
+                    self.monitor_mode = 'off'
+                    improved = False
+
+                if improved:
+                    self.monitor_best = self.name2val[self.monitor_metric]
+                    self.not_improved_count = 0
+                    is_best = True
+                else:
+                    self.not_improved_count += 1
+
+                if self.not_improved_count > self.cfgs['early_stop']:
+                    print("Validation performance didn\'t improve for {} epochs. " "Training stops.".format(
+                        self.cfgs['early_stop']))
+                    early_stop = True
+        return is_best, early_stop
+
+    def _print_best(self):
+        print('Best results (w.r.t {}) in validation set:'.format(self.cfgs["monitor_metric"]))
+        for key, value in self.best_recorder['val'].items():
+            print('\t{:15s}: {}'.format(str(key), value))
+
+        print('Best results (w.r.t {}) in test set:'.format(self.cfgs["monitor_metric"]))
+        for key, value in self.best_recorder['test'].items():
+            print('\t{:15s}: {}'.format(str(key), value))
+
+    def print_best_and_save_to_file(self):
+        t = get_timestamp()
+        temp = "=" * 25
+        info = f'{temp} {t} {temp}\n'
+        _info = 'Best results (w.r.t {}) in validation set:'.format(self.cfgs["monitor_metric"])
+        info += _info + "\n"
+        print(_info)
+
+        for key, value in self.best_recorder['val'].items():
+            _info = '\t{:15s}: {}'.format(str(key), value)
+            info += _info + '\n'
+            print(_info)
+
+        _info = 'Best results (w.r.t {}) in test set:'.format(self.cfgs["monitor_metric"])
+        info += _info + "\n"
+        print(_info)
+        for key, value in self.best_recorder['test'].items():
+            _info = '\t{:15s}: {}'.format(str(key), value)
+            info += _info + '\n'
+            print(_info)
+        
+        self.write(info)
+
+    def write(self, info):
         with open(self.log_dir, "a") as f:
-            f.write(arr)
-        print(arr)
+            f.write(info)
+        print(info)
 
     def reset_visdom(self):
         self.saved = False
+
+    def print(self, info, flush=False):
+        if flush:
+            print('\r'+info, end='', flush=True)
+        else:
+            print(info)
 
     # |visuals|: dictionary of images to display or save\
 

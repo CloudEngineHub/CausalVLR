@@ -37,14 +37,15 @@ sample:
 
 trainer: 
   epochs: 100
-  result_dir: "results/iu_xray/baseline"
-  record_dir: "records/iu_xray/baseline"
+  result_dir: "results/mrg/iu_xray_baseline"
+  record_dir: "records/mrg/iu_xray_baseline"
   save_period: 1
-  metric: ['Meteor', 'Rouge', 'Cider', 'Bleu']
+  metric: ['Bleu', 'Meteor', 'Rouge', 'Cider']
   monitor_mode: "max"
   monitor_metric: "BLEU_4"
   early_stop: 50
   display_port: 8099
+  statistic_level: 1
   monitor_metric_curves: false
   monitor_report: false
   monitor_image: false

@@ -20,9 +20,9 @@ model = Baseline(cfgs, token)
 # -------------------
 # inference
 # -------------------
-work = MRGPipeline(model, cfgs, metric_caculator=MetricCalculator(cfgs))
+# work = MRGPipeline(model, cfgs, metric_caculator=MetricCalculator(cfgs))
 test_dataloader = MRGDataLoader(cfgs, token, split='test', shuffle=False)
-work.inference(test_dataloader)
+# work.inference(test_dataloader)
 # -------------------
 # training
 # -------------------
@@ -35,8 +35,8 @@ lr_scheduler = build_lr_scheduler(cfgs, optimizer, len(train_dataloader))
 work = MRGPipeline(model, cfgs, 
                 criterion=compute_lm_loss, 
                 metric_caculator=MetricCalculator(cfgs),
-                optimizer=lr_scheduler,
-                lr_scheduler=optimizer,
+                optimizer=optimizer,
+                lr_scheduler=lr_scheduler,
                 train_dataloader=train_dataloader,
                 val_dataloader=val_dataloader,
                 test_dataloader=test_dataloader
