@@ -1,0 +1,30 @@
+model: 
+  llm: "gpt-3.5-turbo-0613"
+  num_reasoners: 2    # causal reasoning
+  num_evaluators: 1   # counterfactuals reasoning
+  shot_number: 3  # Number of n-shot training examples
+  top_p: 0.4
+  temperature: 0.5 
+  api_key: ""
+	api_url: ""
+  method: "caco_cot"
+  prompt_format: CQM-A' 
+  # choices=['CQM-A', 'CQM-LA', 'CQM-EA', 'CQM-LEA', 'CQM-ELA', 'CQM-AL', 'CQM-AE', 
+  # 'CQM-ALE', 'QCM-A', 'QCM-LA', 'QCM-EA', 'QCM-LEA', 'QCM-ELA', 'QCM-AL', 'QCM-AE',
+  # 'QCM-ALE', 'QCML-A', 'QCME-A', 'QCMLE-A', 'QCLM-A', 'QCEM-A', 'QCLEM-A', 'QCLM-AE']
+
+data:
+  dataset_name: "scienceqa"
+  data_dir: "~/MultiModalLLM/data/scienceqa/"
+  num_workers: 8
+  options: ["A", "B", "C", "D", "E"]
+  test_split:  "test"  # choices=['test', 'val', 'minival', 'train'])
+  txt_only: true
+  test_number: 10  # 'GPT-3 is expensive. -1 for whole val/test set'
+
+
+other:
+  task_name: "causal-consistent-cot"  # you can name current running work
+  seed: -1
+  cuda: 3
+  task: "chat"

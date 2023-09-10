@@ -3,7 +3,7 @@ import os.path as osp
 sys.path.append(osp.join(osp.dirname(__file__), '../hcpcvlr'))
 
 from utils.cfgs_loader import load_yaml
-from models.mrg.baseline import Baseline
+from models.mrg import Baseline, VLCI
 from modules.tokenizers import MRGTokenizer
 from api.pipeline import MRGPipeline
 from utils.metrics import MetricCalculator
@@ -16,16 +16,19 @@ cfgs = load_yaml("configs/mrg/baseline.yaml")
 # print(cfgs)
 token = MRGTokenizer(cfgs)
 model = Baseline(cfgs, token)
-
 # -------------------
 # inference
 # -------------------
 # work = MRGPipeline(model, cfgs, metric_caculator=MetricCalculator(cfgs))
-test_dataloader = MRGDataLoader(cfgs, token, split='test', shuffle=False)
+# test_dataloader = MRGDataLoader(cfgs, token, split='test', shuffle=False)
 # work.inference(test_dataloader)
 # -------------------
 # training
 # -------------------
+cfgs = load_yaml("configs/mrg/baseline.yaml")
+token = MRGTokenizer(cfgs)
+test_dataloader = MRGDataLoader(cfgs, token, split='test', shuffle=False)
+model = VLCI(cfgs, token)
 train_dataloader = MRGDataLoader(cfgs, token, split='train', shuffle=True)
 val_dataloader = MRGDataLoader(cfgs, token, split='val', shuffle=False)
 

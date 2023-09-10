@@ -94,7 +94,6 @@ class WordEmbed(nn.Module):
         return self.lut(x) * math.sqrt(self.embed_dim)
 
 
-
 class TextEmbed(nn.Module):
     """
     test embedding with 1d sin-cos embedding
@@ -127,8 +126,6 @@ class TextEmbed(nn.Module):
         x = x + self.pos_embed[:, 1:x.size(1)+1]
         x = self.dropout(self.norm(x))
         return x
-
-
 
 
 class SublayerConnection(nn.Module):
