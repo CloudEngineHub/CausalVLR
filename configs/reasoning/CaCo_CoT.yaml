@@ -1,8 +1,0 @@
-model
-other:
-  task_name: "8"  # you can name current running work
-  seed: -1
-  cuda: 3
-  task: "mrg"
-  load_model_path: ""
-  resume: ""

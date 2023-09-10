@@ -25,10 +25,10 @@ model = Baseline(cfgs, token)
 # -------------------
 # training
 # -------------------
-cfgs = load_yaml("configs/mrg/vlci.yaml")
+cfgs = load_yaml("configs/mrg/baseline.yaml")
 token = MRGTokenizer(cfgs)
-model = VLCI(cfgs, token)
 test_dataloader = MRGDataLoader(cfgs, token, split='test', shuffle=False)
+model = VLCI(cfgs, token)
 train_dataloader = MRGDataLoader(cfgs, token, split='train', shuffle=True)
 val_dataloader = MRGDataLoader(cfgs, token, split='val', shuffle=False)
 
