@@ -1,7 +1,13 @@
-### [CVPR 2023: Masked Images Are Counterfactual Samples for Robust Fine-tuning](https://openaccess.thecvf.com/content/CVPR2023/papers/Xiao_Masked_Images_Are_Counterfactual_Samples_for_Robust_Fine-Tuning_CVPR_2023_paper.pdf):   
+# CVPR 2023: Masked Images Are Counterfactual Samples for Robust Fine-tuning
+
+
+<div align=center>
+
 ![Image](../../Images/CVPR23.png)          
 
-[Masked Images Are Counterfactual Samples for Robust Fine-tuning](https://github.com/Coxy7/robust-finetuning)        
+## |[📜 paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Xiao_Masked_Images_Are_Counterfactual_Samples_for_Robust_Fine-Tuning_CVPR_2023_paper.pdf) | [🌌 code](https://github.com/Coxy7/robust-finetuning) |
+
+</div>
 
 ## Citation    
 ```
