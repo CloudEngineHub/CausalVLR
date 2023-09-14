@@ -14,23 +14,23 @@ CausalVLR is a python open-source framework for causal relation discovery, causa
 
   
 [![PyPI](https://img.shields.io/pypi/v/0.0.1)]()
-[![docs](https://img.shields.io/badge/docs-latest-blue)]()
-[![badge](https://github.com/open-mmlab/mmdetection/workflows/build/badge.svg)](https://github.com/HCPLab-SYSU/CausalVLR/actions)
-[![license](https://img.shields.io/github/license/open-mmlab/mmdetection.svg)]()
+[![docs](https://img.shields.io/badge/docs-latest-blue)](docs/index.md)
+[![license](https://img.shields.io/github/license/HCPLab-SYSU/CausalVLR)](LICENSE)
 [![open issues](http://isitmaintained.com/badge/open/HCPLab-SYSU/CausalVLR.svg)](https://github.com/HCPLab-SYSU/CausalVLR/issues)
 [![issue resolution](http://isitmaintained.com/badge/resolution/HCPLab-SYSU/CausalVLR.svg)](https://github.com/HCPLab-SYSU/CausalVLR/issues)
 
-[📘Documentation]() |
-[🛠️Installation]() |
-[👀Model Zoo]() |
-[🆕Update News]() |
-[🚀Ongoing Projects]() |
-[🤔Reporting Issues]()
+[📘Documentation](docs/index.md) |
+[🛠️Installation](docs/getting_started.md#installation) |
+[👀Model Zoo](docs/method.md#model-zoo) |
+[🆕Update News](docs/method.md#update-news) |
+[🚀Ongoing Projects](docs/method.md#ongoing-projects) |
+[🤔Reporting Issues](https://github.com/HCPLab-SYSU/CausalVLR/issues)
 
 </div>
+<!-- > [![badge](https://github.com/HCPLab-SYSU/CausalVLR/workflows/build/badge.svg)](https://github.com/HCPLab-SYSU/CausalVLR/actions) </-->
 
 ---
-<h2 id="table-of-contents">📄 Table of Contents </h2>
+## <a id="table-of-contents">📄 Table of Contents </a>
 
 - [📄 Table of Contents](#table-of-contents)
 - [📚 Introduction](#introduction)
@@ -38,15 +38,17 @@ CausalVLR is a python open-source framework for causal relation discovery, causa
 - [👨‍🏫 Get Started](#get-started)
 - [👀 Model Zoo](#model-zoo)
 - [🎫 License](#license)
-- [🖊️ Citation](#️citation)
-- [🙌 Contributing](#contributing)
+- [🖊️ Citation](#️c)
+- [🙌 Contribution](#contribution)
 - [🤝 Acknowledgement](#acknowledgement)
-- [🏗️ Projects in HCPLab](#️projects-in-hcplab)
+- [🏗️ Projects in HCPLab](#️hcp)
 
 
-<h2 id="introduction">📚 Introduction <a href="#table-of-contents">🔝</a> </h2>
+## <a id="introduction">📚 Introduction <a href="#table-of-contents">🔝</a> </a>
+
+CausalVLR is a python open-source framework based on PyTorch for causal relation discovery, causal inference that implements state-of-the-art causal learning algorithms for various visual-linguistic reasoning tasks, detail see on [Documentation](docs/index.md).
+
 <div>
-CausalVLR is a python open-source framework based on PyTorch for causal relation discovery, causal inference that implements state-of-the-art causal learning algorithms for various visual-linguistic reasoning tasks, detail see on <a hraf="">Documentation</a>.
 <p> </p>
 </div>
 
@@ -79,7 +81,7 @@ Framework Overview
 
 ❗ **Note:** The framework is actively being developed. Feedbacks (issues, suggestions, etc.) are highly encouraged.
 
-<h2 id="whats-new">🚀 What's New <a href="#table-of-contents">🔝</a> </h2>
+## <a id="whats-new">🚀 What's New <a href="#table-of-contents">🔝</a> </a>
 
 
 ### 🔥 **2023.8.19**.
@@ -115,7 +117,7 @@ Framework Overview
 | CoT | 78.4|63.6|71.1|
 | SC-CoT | 84.0|66.0|71.4|
 | C-CoT | 82.5|68.8|70.5|
-| CaCo-CoT | 86.5|73.5|73.5|
+| **CaCo-CoT** | **86.5(+2.5)**|**73.5(3.4)**|**73.5(1.8)**|
 </div>
 
 
@@ -172,17 +174,17 @@ Framework Overview
 |**CMCIR**| **36.10** (+1.93)| **52.59** (+1.73)| **38.38** (+3.94)| **46.03** (+4.64)| **48.80** (+4.22)| **52.21** (+1.41)| **38.58** (+1.53)|
 </div>
 
-<h2 id="get-started">👨‍🏫 Getting Started <a href="#table-of-contents">🔝</a> </h2>
+## <a id="get-started">👨‍🏫 Getting Started <a href="#table-of-contents">🔝</a> </a>
 Please see Overview for the general introduction of <a hraf="">CausalVLR</a>.
 
-For detailed user guides and advanced guides, please refer to our [documentation](), and here is the code structure of toolbox.
+For detailed user guides and advanced guides, please refer to our [documentation](docs/index.md), and here is the code structure of toolbox.
 
   
 ![Image](Images/framework.gif) 
 
-## Installation
+### Installation
 
-Please refer to Installation for [installation]("doc") instructions in documentation.
+Please refer to Installation for [installation](docs/getting_started.md) instructions in documentation.
 
 Briefly, to use CausalVLR, we could install it using [pip](https://pypi.org/project/CausalVLR/):
 
@@ -190,9 +192,9 @@ Briefly, to use CausalVLR, we could install it using [pip](https://pypi.org/proj
 pip install CausalVLR
 ```
 
-## Running examples
+### Running examples
 
-For causal discovery, there are various running examples in the **‘tests’** directory.
+For causal discovery, there are various running examples in the **test** directory.
 
 For the implemented modules, we provide unit tests for the convenience of developing your own methods.
 
@@ -212,10 +214,11 @@ Please feel free to let us know if you have any recommendation regarding dataset
 | Faithful Reasoning in LLMs |  CaCo-CoT     | [ScienceQA](https://scienceqa.github.io/), [Com2Sense](https://github.com/PlusLabNLP/Com2Sense), [BoolQ](https://github.com/google-research-datasets/boolean-questions)|
 </div>
 
-<h2 id="license"> 🎫 License <a href="#table-of-contents">🔝</a> </h2>
+## <a id="license"> 🎫 License <a href="#table-of-contents">🔝</a> </a>
+
 This project is released under the <a hraf="https://github.com/HCPLab-SYSU/CausalVLR/LICENSE">Apache 2.0 license</a>.
 
-<h2 id="citation">🖊️ Citation<a href="#table-of-contents">🔝</a> </h2>
+## <a id="citation"> 🖊️ Citation <a href="#table-of-contents">🔝</a> </a>
 
 If you find this project useful in your research, please consider cite:   
 
@@ -230,18 +233,19 @@ If you find this project useful in your research, please consider cite:
 }
 ``` 
 
-<h2 id="contribution"> 🙌 Contribution <a href="#table-of-contents">🔝</a> </h2>
+## <a id="contribution"> 🙌 Contribution <a href="#table-of-contents">🔝</a> </a>
 
 Please feel free to open an issue if you find anything unexpected.
 We are always targeting to make our community better!
 
-<h2 id="acknowledgement"> 🤝 Acknowledgement <a href="#table-of-contents">🔝</a> </h2>
+## <a id="acknowledgement"> 🤝 Acknowledgement <a href="#table-of-contents">🔝</a> </a>
 
 CausalVLR is an open-source project and We appreciate all the contributors who implement their methods or add new features and users who give valuable feedback. We wish that the toolbox and benchmark could serve the growing research community by providing a flexible toolkit to reimplement existing methods and develop their new models.
 
-<h3> 🪐 The review paper here can provide some help </h3>
+### 🪐 The review paper here can provide some help
 
 [Causal Reasoning Meets Visual Representation Learning: A Prospective Study](https://link.springer.com/article/10.1007/s11633-022-1362-z)     
+
 Machine Intelligence Research (MIR) 2022      
 A Review paper for causal reasoning and visual representation learning       
 ![Image](Images/MIR.png)    
@@ -258,8 +262,7 @@ A Review paper for causal reasoning and visual representation learning
   }
 ```
 
-<h2 id="citation">🏗️ Projects in HCPLab<a href="#table-of-contents">🔝</a> </h2>
-
+## <a id="hcp">🏗️ Projects in HCPLab<a href="#table-of-contents">🔝</a> </a>
 
 - [HCP-Diffusion](https://github.com/7eu7d7/HCP-Diffusion)
   is a toolbox for Stable Diffusion models based on 🤗 Diffusers. It facilitates flexiable configurations and component support for training, in comparison with webui and sd-scripts.
