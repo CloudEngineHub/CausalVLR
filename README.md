@@ -104,7 +104,8 @@ Framework Overview
 <div>
 <br>
 
-### ✨  **CaCo-CoT**-Towards CausalGPT: Multiple-consistency Improves Causality in Large Language Models
+### ✨  **CaCo-CoT**-Towards CausalGPT: A Multi-Agent Approach for Faithful Knowledge Reasoning via Promoting Causal Consistency in LLMs
+
 
 <div align=center>
 
