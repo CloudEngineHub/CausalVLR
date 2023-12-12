@@ -84,6 +84,9 @@ Framework Overview
 ## <a id="whats-new">🚀 What's New <a href="#table-of-contents">🔝</a> </a>
 
 
+### 🔥 **2023.12.12**.
+- The paper of [**CaCo-CoT**](projects/CaCo-COT/readme.md) for Faithful Reasoning task in LLMs is [opening](https://arxiv.org/pdf/2308.11914.pdf)!
+- 
 ### 🔥 **2023.8.19**.
 - **v0.0.2** was released in 8/19/2023
 - Support [**CaCo-CoT**](projects/CaCo-COT/readme.md) for Faithful Reasoning task in LLMs
