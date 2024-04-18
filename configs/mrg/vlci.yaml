@@ -14,5 +14,7 @@ optim:
   optim: "Adam"
   lr_en: 1.e-5
   lr_de: 1.e-5
-  # note that we should load the pre-trained model for causal finetuning
+  # note that we should load the 
+  # pre-trained model for causal finetuning
   load_model_path: ""
+
