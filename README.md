@@ -13,7 +13,7 @@ CausalVLR is a python open-source framework for causal relation discovery, causa
 
 
   
-[![PyPI](https://img.shields.io/pypi/v/0.0.1)]()
+[![PyPI](https://img.shields.io/pypi/v/0.0.1)](https://pypi.org/project/hcpcvlr/)
 [![docs](https://img.shields.io/badge/docs-latest-blue)](docs/index.md)
 [![license](https://img.shields.io/github/license/HCPLab-SYSU/CausalVLR)](LICENSE)
 [![open issues](http://isitmaintained.com/badge/open/HCPLab-SYSU/CausalVLR.svg)](https://github.com/HCPLab-SYSU/CausalVLR/issues)
@@ -186,10 +186,15 @@ For detailed user guides and advanced guides, please refer to our [documentation
 
 Please refer to Installation for [installation](docs/getting_started.md) instructions in documentation.
 
-Briefly, to use CausalVLR, we could install it using [pip](https://pypi.org/project/CausalVLR/):
+Briefly, to use CausalVLR, we could install it using **pip**:
 
 ```
-pip install CausalVLR
+git clone https://github.com/HCPLab-SYSU/CausalVLR.git
+pip install -e .
+```
+or install from [PyPI](https://pypi.org/project/hcpcvlr/):
+```
+pip install hcpcvlr
 ```
 
 ### Running examples

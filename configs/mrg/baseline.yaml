@@ -1,7 +1,8 @@
 data:
   dataset_name: "iu_xray"
-  image_dir: "../../MRG/data/iu_xray/images"
-  ann_path: "../../MRG/data/iu_xray/annotation.json"
+  # refer the repo of VLCI: https://github.com/WissingChen/VLCI
+  image_dir: "test_data/iu_xray/images"
+  ann_path: "test_data/iu_xray/annotation.json"
   tokenizer: "ori"
   max_seq_length: 60
   threshold: 3
