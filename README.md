@@ -84,7 +84,7 @@ Framework Overview
 ## <a id="whats-new">🚀 What's New <a href="#table-of-contents">🔝</a> </a>
 
 ### 🔥 **2024.04.07**.
-- 重磅专著[**<\《多模态大模型：新一代人工智能技术范式》**](https://hcplab-sysu.github.io/Book-of-MLM/) 在线资源已上线!
+- 重磅专著[**《多模态大模型：新一代人工智能技术范式》**](https://hcplab-sysu.github.io/Book-of-MLM/) 在线资源已上线!
 
 ### 🔥 **2023.12.12**.
 - The paper of [**CaCo-CoT**](projects/CaCo-COT/readme.md) for Faithful Reasoning task in LLMs is [opening](https://arxiv.org/pdf/2308.11914.pdf)!
