@@ -83,6 +83,9 @@ Framework Overview
 
 ## <a id="whats-new">🚀 What's New <a href="#table-of-contents">🔝</a> </a>
 
+### 🔥 **2025.03.17**.
+- [**CRA (CVPR 2025)**](https://github.com/WissingChen/CRA-GQA) is updated!
+- 
 ### 🔥 **2024.04.07**.
 - 重磅专著[**《多模态大模型：新一代人工智能技术范式》**](https://hcplab-sysu.github.io/Book-of-MLM/) 在线资源已上线!
 
