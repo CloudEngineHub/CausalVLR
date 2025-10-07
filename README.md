@@ -44,7 +44,7 @@ CausalVLR is a Python open-source framework for causal relation discovery and ca
 CausalVLR is a Python open-source framework based on PyTorch for causal relation discovery and causal inference that implements most advanced causal learning algorithms for various visual-linguistic reasoning tasks.
 
 <div align="center">
-<img src="docs/images/framework_overview.png" width="800" alt="Framework Overview"/>
+<img src="./images/CausalVLReasoning_framework.png" width="800" alt="Framework Overview"/>
 </div>
 
 <details open>
